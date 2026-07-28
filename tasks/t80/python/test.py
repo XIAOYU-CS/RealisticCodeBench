@@ -1,0 +1,72 @@
+import unittest
+import json
+
+
+class TestRDFJSONLDToNGSILDConversion(unittest.TestCase):
+    def test_basic_conversion(self):
+        rdf_jsonld = json.dumps({
+            "@context": "http://schema.org/",
+            "@id": "urn:ngsi-ld:Vehicle:A123",
+            "@type": "Vehicle",
+            "speed": {"value": 60, "unitCode": "KMH"}
+        })
+        expected_ngsild = {
+            "id": "urn:ngsi-ld:Vehicle:A123",
+            "type": "Vehicle",
+            "@context": "http://schema.org/",
+            "attributes": [
+                {"type": "Property", "name": "speed", "value": {"value": 60, "unitCode": "KMH"}}
+            ]
+        }
+        result = rdf_jsonld_to_ngsild(rdf_jsonld)
+        self.assertEqual(result, expected_ngsild)
+
+    def test_missing_id_and_type(self):
+        rdf_jsonld = json.dumps({
+            "@context": "http://schema.org/",
+            "speed": {"value": 60, "unitCode": "KMH"}
+        })
+        expected_ngsild = {
+            "id": "urn:ngsi-ld:unknown:id",
+            "type": "UnknownType",
+            "@context": "http://schema.org/",
+            "attributes": [
+                {"type": "Property", "name": "speed", "value": {"value": 60, "unitCode": "KMH"}}
+            ]
+        }
+        result = rdf_jsonld_to_ngsild(rdf_jsonld)
+        self.assertEqual(result, expected_ngsild)
+
+    def test_with_nested_objects(self):
+        rdf_jsonld = json.dumps({
+            "@context": "http://schema.org/",
+            "@id": "urn:ngsi-ld:Vehicle:A123",
+            "@type": "Vehicle",
+            "location": {"latitude": 48.8566, "longitude": 2.3522}
+        })
+        expected_ngsild = {
+            "id": "urn:ngsi-ld:Vehicle:A123",
+            "type": "Vehicle",
+            "@context": "http://schema.org/",
+            "attributes": [
+                {"type": "Property", "name": "location", "value": {"latitude": 48.8566, "longitude": 2.3522}}
+            ]
+        }
+        result = rdf_jsonld_to_ngsild(rdf_jsonld)
+        self.assertEqual(result, expected_ngsild)
+
+    def test_invalid_json_input(self):
+        rdf_jsonld = "This is not a valid JSON"
+        with self.assertRaises(json.JSONDecodeError):
+            rdf_jsonld_to_ngsild(rdf_jsonld)
+
+    def test_empty_jsonld(self):
+        rdf_jsonld = json.dumps({})
+        expected_ngsild = {
+            "id": "urn:ngsi-ld:unknown:id",
+            "type": "UnknownType",
+            "@context": "https://schema.lab.fiware.org/ld/context",
+            "attributes": []
+        }
+        result = rdf_jsonld_to_ngsild(rdf_jsonld)
+        self.assertEqual(result, expected_ngsild)

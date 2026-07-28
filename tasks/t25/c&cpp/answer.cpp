@@ -1,0 +1,49 @@
+#include <map>
+#include <string>
+#include <ctime>
+
+// Function to get the English name of the day of the week
+std::string getDayName(int dayOfWeek) {
+    const std::string daysOfWeek[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    return daysOfWeek[dayOfWeek];
+}
+
+// Function to get the English name of the month
+std::string getMonthName(int month) {
+    const std::string months[] = {"January", "February", "March", "April", "May", "June", 
+                                  "July", "August", "September", "October", "November", "December"};
+    return months[month - 1]; // Arrays are zero-indexed
+}
+
+// Function to calculate the week of the month
+int getWeekOfMonth(const std::tm& date) {
+    return (date.tm_mday - 1) / 7 + 1;
+}
+
+// Function to get current date information
+std::map<std::string, std::string> get_current_date_info(const std::tm* test_date = nullptr) {
+    std::tm today;
+    if (test_date == nullptr) {
+        time_t rawTime;
+        time(&rawTime);
+        today = *localtime(&rawTime);
+    } else {
+        today = *test_date;
+        mktime(&today);
+    }
+
+    int year = today.tm_year + 1900;
+    int month = today.tm_mon + 1;
+    std::string dayOfWeek = getDayName(today.tm_wday);
+    std::string monthName = getMonthName(month);
+    int weekOfMonth = getWeekOfMonth(today);
+
+    std::map<std::string, std::string> result = {
+        {"year", std::to_string(year)},
+        {"month", monthName},
+        {"week_of_the_month", std::to_string(weekOfMonth)},
+        {"day_of_the_week", dayOfWeek}
+    };
+
+    return result;
+}

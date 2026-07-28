@@ -1,0 +1,24 @@
+import unittest
+
+
+class TestUsernameValidation(unittest.TestCase):
+
+    def test_valid_username_with_letters_numbers_and_underscores(self):
+        result = is_valid_username('user_123')
+        self.assertEqual(result, True)
+
+    def test_valid_username_with_only_letters(self):
+        result = is_valid_username('username')
+        self.assertEqual(result, True)
+
+    def test_invalid_username_with_special_characters(self):
+        result = is_valid_username('user-name')
+        self.assertEqual(result, False)
+
+    def test_invalid_username_with_spaces(self):
+        result = is_valid_username('user name')
+        self.assertEqual(result, False)
+
+    def test_valid_username_with_only_numbers(self):
+        result = is_valid_username('12345')
+        self.assertEqual(result, True)

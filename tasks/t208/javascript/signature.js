@@ -1,0 +1,7 @@
+/**
+ * Converts a Base64-encoded string to an ArrayBuffer.
+ *
+ * @param base64 - The Base64-encoded string to convert.
+ * @returns An ArrayBuffer representing the decoded bytes.
+ */
+export function convertBase64ToArrayBuffer(base64) {}

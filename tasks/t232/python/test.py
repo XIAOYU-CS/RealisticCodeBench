@@ -1,0 +1,77 @@
+import unittest
+
+
+class TestParseMarkdownTitles(unittest.TestCase):
+
+    def test_extract_first_second_and_third_level_titles(self):
+        markdown = """        
+        # Title 1
+        Content here.
+        ## Subtitle 1.1
+        More content.
+        ### Subsubtitle 1.1.1
+        Even more content.
+        # Title 2
+        Another content.
+        """
+        result = extract_markdown_titles_by_level(markdown)
+        self.assertEqual(result, {
+            'level1': ["Title 1", "Title 2"],
+            'level2': ["Subtitle 1.1"],
+            'level3': ["Subsubtitle 1.1.1"],
+        })
+
+    def test_handle_missing_headers(self):
+        markdown = """        
+        This is just some text without headers.
+        """
+        result = extract_markdown_titles_by_level(markdown)
+        self.assertEqual(result, {
+            'level1': [],
+            'level2': [],
+            'level3': [],
+        })
+
+    def test_handle_only_first_level_headers(self):
+        markdown = """        
+        # Only Title 1
+        Content without subtitles.
+
+        # Only Title 2
+        More content.
+        """
+        result = extract_markdown_titles_by_level(markdown)
+        self.assertEqual(result, {
+            'level1': ["Only Title 1", "Only Title 2"],
+            'level2': [],
+            'level3': [],
+        })
+
+    def test_handle_mixed_headers_with_empty_lines(self):
+        markdown = """        
+        # Title 1
+        ## Subtitle 1.1
+        Some content here.
+        ### Subsubtitle 1.1.1
+
+        # Title 2
+        """
+        result = extract_markdown_titles_by_level(markdown)
+        self.assertEqual(result, {
+            'level1': ["Title 1", "Title 2"],
+            'level2': ["Subtitle 1.1"],
+            'level3': ["Subsubtitle 1.1.1"],
+        })
+
+    def test_handle_headers_with_special_characters(self):
+        markdown = """        
+        # Title 1 - Special Characters!
+        ## Subtitle 1.1: The Beginning
+        ### Subsubtitle 1.1.1 (Note)
+        """
+        result = extract_markdown_titles_by_level(markdown)
+        self.assertEqual(result, {
+            'level1': ["Title 1 - Special Characters!"],
+            'level2': ["Subtitle 1.1: The Beginning"],
+            'level3': ["Subsubtitle 1.1.1 (Note)"],
+        })

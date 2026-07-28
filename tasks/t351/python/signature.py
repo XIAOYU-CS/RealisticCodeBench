@@ -1,0 +1,20 @@
+import re
+
+def parse_rank_range(rank_range, step=1):
+    """Parses a string representing a list of ranks or rank ranges into an array of numbers.
+
+    The input string can contain:
+    - Single integers: "1, 2, 3"
+    - Ranges separated by double hyphen "--" or single hyphen "-": "1--5", "10-5"
+    - Mixed format: "1, 3--7, 10"
+
+    A step value controls the increment/decrement within ranges.
+    Only integers (or values convertible to integers) are supported.
+
+    Args:
+        rank_range (str): The string containing ranks and/or ranges.
+        step (int, optional): The increment step for ranges (must be positive). Defaults to 1.
+
+    Returns:
+        list[int]: An array of parsed integers in order.
+    """

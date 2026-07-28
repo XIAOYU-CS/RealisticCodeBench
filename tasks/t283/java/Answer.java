@@ -1,0 +1,46 @@
+package org.real.temp;
+
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+
+
+public class Answer {
+
+    /**
+     * Finds the maximum difference between elements in the list.
+     *
+     * @param l A list of integers containing the elements.
+     * @return The maximum difference.
+     */
+    public static int findMaxDifference(List<Integer> l) {
+        if (l.size() < 2) {
+            return 0;
+        }
+
+        int minVal = l.get(0);
+        int maxDiff = 0;
+
+        for (int i = 1; i < l.size(); ++i) {
+            maxDiff = Math.max(maxDiff, l.get(i) - minVal);
+            minVal = Math.min(minVal, l.get(i));
+        }
+
+        return maxDiff;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        List<Integer> l = new ArrayList<>(n);
+        
+        for (int i = 0; i < n; ++i) {
+            l.add(scanner.nextInt());
+        }
+
+        int maxDiff = findMaxDifference(l);
+        System.out.println(maxDiff);
+        
+        scanner.close();
+    }
+}

@@ -1,0 +1,42 @@
+TEST_CASE("immutable_splice_array", "[splice]") {
+    SECTION("replaces removed elements with a new element") {
+        std::vector<int> inputArray = {1, 2, 3, 4, 5};
+        std::vector<int> expected = {1, 99, 5};
+        REQUIRE(immutable_splice_array(inputArray, 3, 1, 99) == expected);
+    }
+
+    SECTION("should remove specified elements and replace with new element") {
+        std::vector<int> inputArray = {1, 2, 3, 4, 5};
+        int amountToRemove = 2;
+        int indexToRemove = 1;
+        int replaceWith = 99;
+        std::vector<int> result = immutable_splice_array(inputArray, amountToRemove, indexToRemove, replaceWith);
+        REQUIRE(result == std::vector<int>{1, 99, 4, 5});
+    }
+
+    SECTION("should handle removing elements from the end of the array") {
+        std::vector<int> inputArray = {1, 2, 3, 4, 5};
+        int amountToRemove = 2;
+        int indexToRemove = 3;
+        std::vector<int> result = immutable_splice_array(inputArray, amountToRemove, indexToRemove, std::nullopt);
+        REQUIRE(result == std::vector<int>{1, 2, 3});
+    }
+
+    SECTION("should handle the case where no elements are removed") {
+        std::vector<int> inputArray = {1, 2, 3, 4, 5};
+        int amountToRemove = 0;
+        int indexToRemove = 2;
+        int replaceWith = 99;
+        std::vector<int> result = immutable_splice_array(inputArray, amountToRemove, indexToRemove, replaceWith);
+        REQUIRE(result == std::vector<int>{1, 2, 99, 3, 4, 5});
+    }
+
+    SECTION("should handle edge case with an empty input array") {
+        std::vector<int> inputArray = {};
+        int amountToRemove = 1;
+        int indexToRemove = 0;
+        int replaceWith = 99;
+        std::vector<int> result = immutable_splice_array(inputArray, amountToRemove, indexToRemove, replaceWith);
+        REQUIRE(result == std::vector<int>{99});
+    }
+}

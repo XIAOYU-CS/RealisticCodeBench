@@ -1,0 +1,20 @@
+import glob
+
+
+def load_json_files_by_keyword(parent_directory, keyword):
+    """
+    Find JSON files containing the specified keyword, sort them, and load their contents.
+
+    Args:
+        parent_directory (str): Parent directory path to search in
+        keyword (str): Keyword to filter filenames
+
+    Returns:
+        list: List of JSON file contents. Each element corresponds to a file in sorted order.
+              Failed files are represented as None to maintain index correspondence.
+
+    Note:
+        - Searches recursively in all subdirectories
+        - Files are sorted using default OS sorting
+        - Invalid JSON files or unreadable files are skipped with warnings
+    """

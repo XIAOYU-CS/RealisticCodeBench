@@ -1,0 +1,1 @@
+LinkStaticTFPublisher.prototype.load = function(model, sdf) {}

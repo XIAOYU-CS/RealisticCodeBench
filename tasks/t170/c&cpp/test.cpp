@@ -1,0 +1,44 @@
+
+TEST_CASE("minify_html") {
+    SECTION("should remove leading and trailing spaces around tags") {
+        std::string input = "  <div>  <p>Test</p>  </div>  ";
+        std::string expected = "<div><p>Test</p></div>";
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should replace multiple newlines with a single space") {
+        std::string input = "<div>\n\n<p>Test</p>\n\n</div>";
+        std::string expected = "<div> <p>Test</p> </div>";
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should remove unnecessary spaces within text") {
+        std::string input = "<p>This    is a test</p>";
+        std::string expected = "<p>This is a test</p>";
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should handle empty strings") {
+        std::string input = "";
+        std::string expected = "";
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should process complex nested HTML correctly") {
+        std::string input = "<div>   <span>    Text <i>    Italic </i> more text </span>   </div>";
+        std::string expected = "<div><span>Text <i>Italic</i> more text</span></div>";
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should not disrupt content within <pre> and <textarea> tags") {
+        std::string input = "<pre>\n    function example() {\n        console.log(\"example\");\n    }\n</pre>";
+        std::string expected = "<pre>\n    function example() {\n        console.log(\"example\");\n    }\n</pre>"; // assuming no changes in <pre> and <textarea>
+        REQUIRE(minify_html(input) == expected);
+    }
+
+    SECTION("should handle HTML with attributes correctly") {
+        std::string input = "<a href=\"http://example.com\"    title=\"Example\" >Link</a>";
+        std::string expected = "<a href=\"http://example.com\" title=\"Example\">Link</a>";
+        REQUIRE(minify_html(input) == expected);
+    }
+}

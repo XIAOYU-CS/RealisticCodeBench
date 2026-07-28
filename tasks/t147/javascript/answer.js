@@ -1,0 +1,16 @@
+/**
+ * Truncate a string to the specified length, replacing the excess part with an ellipsis.
+ *
+ * @param {string} str - The string to truncate.
+ * @param {number} maxLength - The maximum length of the resulting string.
+ * @returns {string} - The truncated string with ellipsis if applicable.
+ */
+const truncateStringWithReplacement = (str, maxLength) => {
+    // Check if the string length is less than or equal to the specified length
+    if (str.length <= maxLength) {
+        return str; // No need to truncate
+    }
+
+    // Replace the excess part with ellipsis
+    return str.slice(0, maxLength) + '...';
+};

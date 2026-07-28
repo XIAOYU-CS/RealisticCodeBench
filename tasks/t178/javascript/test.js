@@ -1,0 +1,46 @@
+describe('parseSummaryAndExtractCategories', () => {
+    test('extracts categories and cleans the summary correctly', () => {
+        const input = "This is a summary. Categories: [Technology, Health]";
+        const expected = {
+            summary: "This is a summary.",
+            categories: ["Technology", "Health"]
+        };
+        expect(parseSummaryAndExtractCategories(input)).toEqual(expected);
+    });
+
+    test('returns empty categories and original summary when no categories are present', () => {
+        const input = "This is a summary without categories.";
+        const expected = {
+            summary: "This is a summary without categories.",
+            categories: []
+        };
+        expect(parseSummaryAndExtractCategories(input)).toEqual(expected);
+    });
+
+    test('ignores case of the category prefix', () => {
+        const input = "Summary text. categories: [Education, Science]";
+        const expected = {
+            summary: "Summary text.",
+            categories: ["Education", "Science"]
+        };
+        expect(parseSummaryAndExtractCategories(input)).toEqual(expected);
+    });
+
+    test('handles extra spaces and malformed category strings correctly', () => {
+        const input = "Details follow. Categories: [ Business ,  , Finance]";
+        const expected = {
+            summary: "Details follow.",
+            categories: ["Business", "Finance"]
+        };
+        expect(parseSummaryAndExtractCategories(input)).toEqual(expected);
+    });
+
+    test('removes the category string correctly even if it appears in the middle of the summary', () => {
+        const input = "Beginning of summary. Categories: [Art, Design] Continuation of summary.";
+        const expected = {
+            summary: "Beginning of summary. Continuation of summary.",
+            categories: ["Art", "Design"]
+        };
+        expect(parseSummaryAndExtractCategories(input)).toEqual(expected);
+    });
+});

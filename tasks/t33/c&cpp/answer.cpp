@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+
+class TreeNode {
+public:
+    TreeNode(int key) : val(key), left(nullptr), right(nullptr) {}
+
+    TreeNode* left;
+    TreeNode* right;
+    int val;
+};
+
+class BinaryTree {
+public:
+    BinaryTree() : root(nullptr) {}
+
+    void insert(int key) {
+        if (root == nullptr) {
+            root = new TreeNode(key);
+        } else {
+            _insert(root, key);
+        }
+    }
+
+private:
+    TreeNode* root;
+
+    void _insert(TreeNode* node, int key) {
+        if (key < node->val) {
+            if (node->left == nullptr) {
+                node->left = new TreeNode(key);
+            } else {
+                _insert(node->left, key);
+            }
+        } else {
+            if (node->right == nullptr) {
+                node->right = new TreeNode(key);
+            } else {
+                _insert(node->right, key);
+            }
+        }
+    }
+
+public:
+    std::vector<int> inorder_traversal() {
+        std::vector<int> result;
+        _inorder_traversal(root, result);
+        return result;
+    }
+
+    std::vector<int> preorder_traversal() {
+        std::vector<int> result;
+        _preorder_traversal(root, result);
+        return result;
+    }
+
+    std::vector<int> postorder_traversal() {
+        std::vector<int> result;
+        _postorder_traversal(root, result);
+        return result;
+    }
+
+private:
+    void _inorder_traversal(TreeNode* node, std::vector<int>& result) {
+        if (node != nullptr) {
+            _inorder_traversal(node->left, result);
+            result.push_back(node->val);
+            _inorder_traversal(node->right, result);
+        }
+    }
+
+    void _preorder_traversal(TreeNode* node, std::vector<int>& result) {
+        if (node != nullptr) {
+            result.push_back(node->val);
+            _preorder_traversal(node->left, result);
+            _preorder_traversal(node->right, result);
+        }
+    }
+
+    void _postorder_traversal(TreeNode* node, std::vector<int>& result) {
+        if (node != nullptr) {
+            _postorder_traversal(node->left, result);
+            _postorder_traversal(node->right, result);
+            result.push_back(node->val);
+        }
+    }
+};
+

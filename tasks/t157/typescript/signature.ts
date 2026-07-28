@@ -1,0 +1,6 @@
+/**
+ * Checks if the provided image data is a valid Base64 encoded image string.
+ * 
+ * @param {string} imageData - The image question string to be validated.
+ */
+function isBase64EncodedImageData(imageData: string): void {}

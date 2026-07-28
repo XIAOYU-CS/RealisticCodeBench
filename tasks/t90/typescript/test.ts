@@ -1,0 +1,81 @@
+const fs = require('fs');
+
+describe('TestExtractBibInfo', () => {
+    beforeEach(() => {
+        jest.spyOn(fs, 'readFileSync');
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it('test valid entry', () => {
+        const mockBib = `@article{sample2024,
+            author = {John Doe and Jane Smith},
+            title = {A Comprehensive Study on AI},
+            year = {2024}
+        }`;
+        fs.readFileSync.mockReturnValue(mockBib);
+
+        const result = extractBibInfo('dummy.bib');
+        const expected = [{ title: 'A Comprehensive Study on AI', author: 'John Doe and Jane Smith', year: '2024' }];
+        expect(result).toEqual(expected);
+    });
+
+    it('test multiple entries', () => {
+        const mockBib = `
+            @article{sample2024,
+                author = {John Doe},
+                title = {A Comprehensive Study on AI},
+                year = {2024}
+            }
+            @article{sample2023,
+                author = {Jane Smith},
+                title = {Deep Learning Techniques},
+                year = {2023}
+            }
+        `;
+        fs.readFileSync.mockReturnValue(mockBib);
+
+        const result = extractBibInfo('dummy.bib');
+        const expected = [
+            { title: 'A Comprehensive Study on AI', author: 'John Doe', year: '2024' },
+            { title: 'Deep Learning Techniques', author: 'Jane Smith', year: '2023' }
+        ];
+        expect(result).toEqual(expected);
+    });
+
+    it('test missing fields', () => {
+        const mockBib = `@article{sample2024,
+            author = {John Doe},
+            title = {Title Missing Year}
+        }`;
+        fs.readFileSync.mockReturnValue(mockBib);
+
+        const result = extractBibInfo('dummy.bib');
+        const expected = [{ title: 'Title Missing Year', author: 'John Doe', year: null }];
+        expect(result).toEqual(expected);
+    });
+
+    it('test empty file', () => {
+        const mockBib = '';
+        fs.readFileSync.mockReturnValue(mockBib);
+
+        const result = extractBibInfo('dummy.bib');
+        const expected = [];
+        expect(result).toEqual(expected);
+    });
+
+    it('test incorrect format', () => {
+        const mockBib = `@article{sample2024,
+            author = John Doe,
+            title = {Title Without Braces},
+            year = 2024
+        }`;
+        fs.readFileSync.mockReturnValue(mockBib);
+
+        const result = extractBibInfo('dummy.bib');
+        const expected = [{ title: 'Title Without Braces', author: null, year: null }];
+        expect(result).toEqual(expected);
+    });
+});

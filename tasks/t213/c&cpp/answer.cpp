@@ -1,0 +1,71 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <optional>
+
+struct GitDiffChange {
+    std::optional<std::string> diff;
+    std::optional<std::string> code;
+};
+
+struct GitDiffFile {
+    std::string oldPath;
+    std::string newPath;
+    std::vector<GitDiffChange> changes;
+    std::optional<std::string> newFileMode;
+    std::optional<std::string> deletedFileMode;
+    std::optional<std::string> index;
+};
+
+std::vector<GitDiffFile> parse_git_diff_text_to_file_changes_array(const std::string& diffText) {
+    std::vector<GitDiffFile> fileDiffs;
+    GitDiffFile currentFile;
+    std::istringstream diffStream(diffText);
+    std::string line;
+
+    while (std::getline(diffStream, line)) {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+
+        if (line.starts_with("diff --git a/")) {
+            if (!currentFile.oldPath.empty()) {
+                fileDiffs.push_back(currentFile);
+            }
+
+            auto paths = line.substr(11); // Skip 'diff --git '
+            size_t spacePos = paths.find(' ');
+            currentFile.oldPath = paths.substr(2, spacePos - 2); // Removing 'a/'
+            currentFile.newPath = paths.substr(spacePos + 3); // Removing 'b/'
+            currentFile.changes.clear();
+            currentFile.newFileMode.reset();
+            currentFile.deletedFileMode.reset();
+            currentFile.index.reset();
+        } else if (line.starts_with("new file mode")) {
+            if (!currentFile.oldPath.empty()) {
+                currentFile.newFileMode = line.substr(14); // Get the mode
+            }
+        } else if (line.starts_with("deleted file mode")) {
+            if (!currentFile.oldPath.empty()) {
+                currentFile.deletedFileMode = line.substr(18); // Get the mode
+            }
+        } else if (line.starts_with("index")) {
+            if (!currentFile.oldPath.empty()) {
+                currentFile.index = line.substr(6, line.find(' ', 6) - 6); // Get the index
+            }
+        } else if (line.starts_with("@@")) {
+            if (!currentFile.oldPath.empty()) {
+                currentFile.changes.push_back({line, std::nullopt});
+            }
+        } else if (!currentFile.oldPath.empty() && (line.starts_with('+') || line.starts_with('-') || line.starts_with(' '))) {
+            currentFile.changes.push_back({std::nullopt, line});
+        }
+    }
+
+    if (!currentFile.oldPath.empty()) {
+        fileDiffs.push_back(currentFile);
+    }
+
+    return fileDiffs;
+}
